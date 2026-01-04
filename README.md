@@ -1,0 +1,2 @@
+# djangogirls
+tutorial.djangogirls.org
