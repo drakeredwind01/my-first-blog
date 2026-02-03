@@ -43,8 +43,9 @@ command-line
 (myvenv) C:\Users\Name\djangogirls> django-admin.exe startproject mysite .
 
 
-
-
+# create superuser
+python manage.py createsuperuser
+http://127.0.0.1:8000/admin/
 
 
 
@@ -94,6 +95,19 @@ http://127.0.0.1:8000/admin
 python manage.py startapp blog
 
 
+# tell Django that it should use new application (e.g. newapp, blog)
+mysite/settings.py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'newapp',
+    'blog',
+]
+
 
 
 
@@ -108,4 +122,24 @@ Create a fresh venv on that new computer.
 
 Run pip install -r requirements.txt (Build your tools).
 
-Run python manage.py migrate (Build your database from the blueprint).
+
+## add new model to our database
+Run
+python manage.py makemigrations blog (Django prepared a migration file)
+
+
+
+python manage.py migrate (Build your database from the blueprint).
+
+
+
+# Django admin
+blog/admin.py
+    from django.contrib import admin
+    from .models import Post
+
+    admin.site.register(Post)
+
+# more about Django admin
+https://docs.djangoproject.com/en/5.1/ref/contrib/admin/
+
