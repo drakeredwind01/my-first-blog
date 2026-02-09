@@ -140,6 +140,32 @@ blog/admin.py
 
     admin.site.register(Post)
 
+
+
+# urls.py main
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path('', include('blog.urls')),
+
+
+# urls.py blog
+from . import views
+from django.urls import path
+
+urlpatterns = [
+    path('', views.post_list, name='post_list'),
+]
+
+# views.py
+from django.shortcuts import render
+
+def post_list(request):
+    return render(request, 'blog/post_list.html', {})
+
+
 # more about Django admin
 https://docs.djangoproject.com/en/5.1/ref/contrib/admin/
 
