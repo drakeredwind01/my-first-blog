@@ -166,6 +166,59 @@ def post_list(request):
     return render(request, 'blog/post_list.html', {})
 
 
+# app(blog) > templates > blog > post_list.html
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Ola's blog</title>
+        </head>
+        <body>
+            <p>Hi there!</p>
+            <p>It works!</p>
+
+            <h1>A heading</h1> for your most important heading
+            <h2>A sub-heading</h2> for a heading at the next level
+            <h3>A sub-sub-heading</h3> …and so on, up to <h6>
+            <p>A paragraph of text</p>
+            <em>text</em> emphasizes your text
+            <strong>text</strong> strongly emphasizes your text
+            <br> goes to another line (you can't put anything inside br and there's no closing tag)
+            <a href="https://djangogirls.org">link</a> creates a link
+            <ul><li>first item</li><li>second item</li></ul> makes a list, just like this one!
+            <div></div> defines a section of the page
+            <nav></nav> defines a set of navigation links
+            <article></article> specifies independent, self-contained content
+            <section></section> defines a section in a document
+            <header></header> specifies a header for a document or section
+            <main></main> specifies the main content of a document
+            <aside></aside> defines some content aside from the content it is placed in (like a sidebar)
+            <footer></footer> defines a footer for a document or section
+            <time></time> defines a specific time (or datetime)
+        </body>
+    </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # more about Django admin
 https://docs.djangoproject.com/en/5.1/ref/contrib/admin/
 
