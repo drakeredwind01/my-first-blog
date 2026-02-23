@@ -197,20 +197,43 @@ def post_list(request):
         </body>
     </html>
 
+# Django ORM and QuerySets
+https://tutorial.djangogirls.org/en/django_orm/
+
+python manage.py shell
+
+>>> from blog.models import Post
+
+>>> Post.objects.all()
+
+>>> Post.objects.create(author=me, title='Sample title', text='Test')
 
 
 
 
+# views.py filters
+imports
+    from django.shortcuts import render
+    from django.utils import timezone
+    from .models import Post
+
+
+posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
+
+{new name} = {Object}.objects.filter({filter}).order_by('{order}')
+
+posts = Post.objects.all()
+
+posts = Post.objects.filter(title__contains='title')
 
 
 
+# filters
+{Object}.objects.filter()
+{Object}.objects.order_by()
 
-
-
-
-
-
-
+published_date__lte=timezone.now()
+order_by('published_date')
 
 
 
