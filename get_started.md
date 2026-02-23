@@ -199,6 +199,7 @@ def post_list(request):
 
 # Django ORM and QuerySets
 https://tutorial.djangogirls.org/en/django_orm/
+https://docs.djangoproject.com/en/5.1/ref/models/querysets/
 
 python manage.py shell
 
