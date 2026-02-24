@@ -17,9 +17,9 @@
         <p>this is the number of posts: {{ posts.count }}</p>
         {% for post in posts %}
             <article>
-                <time>published: {{ post.published_date }}</time>
                 <h2><a href="">{{ post.title }}</a></h2>
                 <p>{{ post.text|linebreaks }}</p>
+                <time>published: {{ post.published_date }}</time>
             </article>
         {% endfor %}
     </body>
