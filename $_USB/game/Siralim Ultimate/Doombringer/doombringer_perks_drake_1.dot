@@ -1,0 +1,133 @@
+// Directed graph of reactive effects (cause -> effect) for perks
+// Edges now include perk rank, cost per rank, and extra-trigger details when applicable.
+digraph PerkCentric {
+  rankdir=LR;
+  // Perk nodes are primary (larger, boxed). Event/Outcome nodes are smaller and light.
+  node [shape=box, style=filled, fillcolor="/pastel13/2", fontsize=11];
+
+  // Perk nodes (label includes rank & cost)
+  Anger_Management  [label="Anger Management\nrank=1 cost=100"];
+  Aversion          [label="Aversion\nrank=1 cost=100"];
+  Blind_Fury        [label="Blind Fury\nranks=2 cost=50"];
+  Defiance          [label="Defiance\nranks=2 cost=50"];
+  Domination        [label="Domination\nrank=1 cost=100"];
+  Detainment        [label="Detainment\nrank=1 cost=100"];
+  Eruption          [label="Eruption\nrank=1 cost=100"];
+  Momentum          [label="Momentum\nranks=10 cost=10"];
+  Obscuration       [label="Obscuration\nranks=2 cost=50"];
+  Outburst          [label="Outburst\nrank=1 cost=100"];
+  Recklessness      [label="Recklessness\nrank=1 cost=100"];
+  Siegebreaker      [label="Siegebreaker\nrank=1 cost=100"];
+  Soul_Rending      [label="Soul Rending\nrank=1 cost=100"];
+  Unbound_Hatred    [label="Unbound Hatred\nranks=2 cost=50"];
+  Unleashed_Power   [label="Unleashed Power\nranks=2 cost=50"];
+  Juggernaut        [label="Juggernaut\nrank=1 cost=1"];
+
+  // Event/outcome nodes (smaller)
+  node [shape=ellipse, style=filled, fillcolor="/pastel13/1", fontsize=10];
+  on_heal; on_death; on_resurrect; on_attack; on_cast; on_defend; on_provoke; on_critical; on_dodge; on_buff; on_debuff; on_minion; on_action;
+  avoid_damage; less_damage; double_action; stats_increase; increased_damage; resurrect_chance; critical_dodge_boost;
+
+  anger_management -> on_heal -> on_death [label="name: anger_management \ncause: on-heal → effect: on-death"];
+  aversion -> on_defend -> on_provoke [label="name: aversion \ncause: on-defend → effect: on-provoke"];
+  blind_fury -> on_attack -> on_attack [label="name: blind_fury \ncause: on-attack → on-attack\nextra triggers per activation: +2 (rank 2)\ntotal triggers = original +2"];
+  blind_fury -> on_cast -> on_cast [label="name: blind_fury \ncause: on-cast → on-cast\nextra triggers per activation: +2 (rank 2)"];
+  Defiance -> on_heal -> on_heal [label="name: Defiance \ncause: on-heal → on-heal\nextra triggers per activation: +2 (rank 2)"];
+  Defiance -> on_death -> on_death [label="name: Defiance \ncause: on-death → on-death\nextra triggers per activation: +2 (rank 2)"];
+  Defiance -> on_resurrect -> on_resurrect [label="name: Defiance \ncause: on-resurrect → on-resurrect\nextra triggers per activation: +2 (rank 2)"];
+  Domination -> on_buff -> avoid_damage [label="name: Domination \ncause: on-buff → effect: avoid damage chance (3% per activation up to cap)"];
+  Domination -> on_debuff -> avoid_damage [label="name: Domination \ncause: on-debuff → effect: avoid damage chance (3% per activation up to cap)"];
+  Domination -> on_minion -> avoid_damage [label="name: Domination \ncause: on-minion → effect: avoid damage chance (3% per activation up to cap)"];
+  Detainment -> on_defend -> less_damage [label="name: Detainment \ncause: on-defend → effect: take 5% less damage per activation (stacking 80% max)"];
+  Detainment -> on_provoke -> less_damage [label="name: Detainment \ncause: on-provoke → effect: take 5% less damage per activation (stacking 80% max)"];
+  Eruption -> on_attack -> on_resurrect [label="name: Eruption \ncause: on-attack → effect: on-resurrect"];
+  Momentum -> on_action -> double_action [label="name: Momentum \ncause: on-action → effect: double action value\nchance-based: 5% per rank (ranks=10 => 50% max)"];
+  Obscuration -> on_critical -> on_critical [label="name: Obscuration \ncause: on-critical → effect: on-critical\nextra triggers per activation: +2 (rank 2)"];
+  Obscuration -> on_dodge -> on_dodge [label="name: Obscuration \ncause: on-dodge → effect: on-dodge\nextra triggers per activation: +2 (rank 2)"];
+  Outburst -> on_action -> stats_increase [label="name: Outburst \ncause: on-action → effect: +1% stats per triggering activation (rank=1)"];
+  Recklessness -> on_critical -> critical_dodge_boost [label="name: Recklessness \ncause: on-critical → effect: +5% crit & dodge chance per activation"];
+  Recklessness -> on_dodge -> critical_dodge_boost [label="name: Recklessness \ncause: on-dodge → effect: +5% crit & dodge chance per activation"];
+  Siegebreaker -> on_attack -> increased_damage [label="name: Siegebreaker \ncause: on-attack → effect: +10% damage per attack trigger"];
+  Soul_Rending -> on_heal -> resurrect_chance [label="name: Soul Rending \ncause: on-heal → effect: chance to resurrect per activation (5% per stack)"];
+  Soul_Rending -> on_death -> resurrect_chance [label="name: Soul Rending \ncause: on-death → effect: chance to resurrect per activation (5% per stack)"];
+  Soul_Rending -> on_resurrect -> resurrect_chance [label="name: Soul Rending \ncause: on-resurrect → effect: chance to resurrect per activation (5% per stack)"];
+  Unbound_Hatred -> on_buff -> on_buff [label="name: Unbound Hatred \ncause: on-buff → effect: on-buff\nextra triggers per activation: +2 (rank 2)"];
+  Unbound_Hatred -> on_debuff -> on_debuff [label="name: Unbound Hatred \ncause: on-debuff → effect: on-debuff\nextra triggers per activation: +2 (rank 2)"];
+  Unbound_Hatred -> on_minion -> on_minion [label="name: Unbound Hatred \ncause: on-minion → effect: on-minion\nextra triggers per activation: +2 (rank 2)"];
+  Unleashed_Power -> on_defend -> on_defend [label="name: Unleashed Power \ncause: on-defend → effect: on-defend\nextra triggers per activation: +2 (rank 2)"];
+  Unleashed_Power -> on_provoke -> on_provoke [label="name: Unleashed Power \ncause: on-provoke → effect: on-provoke\nextra triggers per activation: +2 (rank 2)"];
+  Juggernaut -> on_action -> increased_damage [label="name: Juggernaut \ncause: on-action → effect: +5% damage per on-action trigger (rank=1)"];
+
+
+
+
+
+/*
+closed loops:
+  defiance and soul render
+    cap 50% to resurrect
+  domination and unbound hatred
+    chance to avoid damage (up to 50%)
+  detainment and unleash power
+    damage reduction (up to 80%)
+  Obscuration and Recklessness
+    Stupidly Overpowered
+      The Logic: If Critical -> Trigger extra Critical effects.
+      Positive Feedback Loop: More Crits → More Obscuration triggers → Even more Crits
+      Recklessness gives you an independent 5% chance to Crit/Dodge for every previous Crit/Dodge
+      Obscuration triples the triggers of those crits
+
+The Reset Hook: Use the Carnal Genesis trait (from the Seductress/Succubus Spirit you mentioned earlier) or the Royal Phoenix trait.
+
+
+
+
+
+  // Edges from Perk -> Event/Outcome with cause→effect on labels
+  Anger_Management -> on_death [label="cause: on-heal → effect: on-death"];
+
+  Aversion -> on_provoke [label="cause: on-defend → effect: on-provoke"];
+
+  Blind_Fury -> on_attack [label="cause: on-attack → effect: on-attack\nextra triggers per activation: +2 (rank 2)\ntotal triggers = original +2"];
+  Blind_Fury -> on_cast   [label="cause: on-cast → effect: on-cast\nextra triggers per activation: +2 (rank 2)"];
+
+  Defiance -> on_heal      [label="cause: on-heal → effect: on-heal\nextra triggers per activation: +2 (rank 2)"];
+  Defiance -> on_death     [label="cause: on-death → effect: on-death\nextra triggers per activation: +2 (rank 2)"];
+  Defiance -> on_resurrect [label="cause: on-resurrect → effect: on-resurrect\nextra triggers per activation: +2 (rank 2)"];
+
+  Domination -> avoid_damage [label="cause: on-buff/on-debuff/on-minion → effect: avoid damage chance (3% per activation up to cap)"];
+
+  Detainment -> less_damage [label="cause: on-defend/on-provoke → effect: take 5% less damage per activation (stacking)"];
+
+  Eruption -> on_resurrect [label="cause: on-attack → effect: on-resurrect"];
+
+  Momentum -> double_action [label="cause: on-action → effect: double action value\nchance-based: 5% per rank (ranks=10 => 50% max)"];
+
+  Obscuration -> on_critical [label="cause: on-critical → effect: on-critical\nextra triggers per activation: +2 (rank 2)"];
+  Obscuration -> on_dodge    [label="cause: on-dodge → effect: on-dodge\nextra triggers per activation: +2 (rank 2)"];
+
+  Outburst -> stats_increase [label="cause: on-action → effect: +1% stats per triggering activation (rank=1)"];
+
+  Recklessness -> critical_dodge_boost [label="cause: on-critical/on-dodge → effect: +5% crit & dodge chance per activation"];
+
+  Siegebreaker -> increased_damage [label="cause: on-attack → effect: +10% damage per attack trigger"];
+
+  Soul_Rending -> resurrect_chance [label="cause: on-heal/on-death/on-resurrect → effect: chance to resurrect per activation (5% per stack)"];
+
+  Unbound_Hatred -> on_buff   [label="cause: on-buff → effect: on-buff\nextra triggers per activation: +2 (rank 2)"];
+  Unbound_Hatred -> on_debuff [label="cause: on-debuff → effect: on-debuff\nextra triggers per activation: +2 (rank 2)"];
+  Unbound_Hatred -> on_minion [label="cause: on-minion → effect: on-minion\nextra triggers per activation: +2 (rank 2)"];
+
+  Unleashed_Power -> on_defend  [label="cause: on-defend → effect: on-defend\nextra triggers per activation: +2 (rank 2)"];
+  Unleashed_Power -> on_provoke [label="cause: on-provoke → effect: on-provoke\nextra triggers per activation: +2 (rank 2)"];
+
+  Juggernaut -> increased_damage [label="cause: on-action → effect: +5% damage per on-action trigger (rank=1)"];
+
+  // layout groups for readability
+  { rank = same; Anger_Management; Aversion; Blind_Fury; Defiance }
+  { rank = same; Domination; Detainment; Eruption; Momentum }
+  { rank = same; Obscuration; Outburst; Recklessness; Siegebreaker }
+  { rank = same; Soul_Rending; Unbound_Hatred; Unleashed_Power; Juggernaut }
+*/
+}
+

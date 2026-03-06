@@ -1,0 +1,85 @@
+// Directed graph of reactive effects (cause -> effect) for perks
+// Edges now include perk rank, cost per rank, and extra-trigger details when applicable.
+digraph PerkReactions {
+	rankdir=LR;
+	node [shape=ellipse, style=filled, fillcolor="/pastel13/1"];
+
+	// Trigger / effect nodes
+	on_heal       [label="on-heal"];
+	on_death      [label="on-death"];
+	on_resurrect  [label="on-resurrect"];
+	on_attack     [label="on-attack"];
+	on_cast       [label="on-cast"];
+	on_defend     [label="on-defend"];
+	on_provoke    [label="on-provoke"];
+	on_critical   [label="on-critical"];
+	on_dodge      [label="on-dodge"];
+	on_buff       [label="on-buff"];
+	on_debuff     [label="on-debuff"];
+	on_minion     [label="on-minion"];
+	on_action     [label="on-action"];
+
+	// Outcome / modifier nodes
+	avoid_damage       [label="avoid damage / evade"];
+	less_damage        [label="take less damage"];
+	double_action      [label="double action value"];
+	stats_increase     [label="+stats (non-HP)"];
+	increased_damage   [label="+damage"];
+	resurrect_chance   [label="chance to resurrect"];
+	critical_dodge_boost [label="crit & dodge chance"];
+
+	// Edges (cause -> effect) labeled with perk name + rank/cost/extra info
+	on_heal -> on_death       [label="Anger Management\nrank=1 cost=100"];
+	on_defend -> on_provoke   [label="Aversion\nrank=1 cost=100"];
+
+	// Blind Fury: ranks=2, cost=50, +1 extra trigger per rank (max +2)
+	on_attack -> on_attack    [label="Blind Fury\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)\n(total triggers = original +2)"];
+	on_cast   -> on_cast      [label="Blind Fury\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)\n(total triggers = original +2)"];
+
+	// Defiance: ranks=2, cost=50, +1 extra per rank on heal/death/resurrect (max +2)
+	on_heal      -> on_heal       [label="Defiance\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)"];
+	on_death     -> on_death      [label="Defiance\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)"];
+	on_resurrect -> on_resurrect  [label="Defiance\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)"];
+
+	on_buff   -> avoid_damage    [label="Domination\nrank=1 cost=100\neffect: avoid damage chance per activation"];
+	on_debuff -> avoid_damage    [label="Domination\nrank=1 cost=100\neffect: avoid damage chance per activation"];
+	on_minion -> avoid_damage    [label="Domination\nrank=1 cost=100\neffect: avoid damage chance per activation"];
+
+	on_defend -> less_damage     [label="Detainment\nrank=1 cost=100\neffect: damage reduction per activation"];
+	on_provoke -> less_damage    [label="Detainment\nrank=1 cost=100\neffect: damage reduction per activation"];
+
+	on_attack -> on_resurrect    [label="Eruption\nrank=1 cost=100"];
+
+	on_action -> double_action   [label="Momentum\nranks=10 cost=10\neffect: chance-based double-value per rank (chance not deterministic)"];
+
+	// Obscuration: ranks=2, cost=50, +1 extra per rank for critical/dodge
+	on_critical -> on_critical   [label="Obscuration\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)"];
+	on_dodge    -> on_dodge      [label="Obscuration\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)"];
+
+	on_action -> stats_increase  [label="Outburst\nrank=1 cost=100\neffect: +1% stats per triggering activation"];
+
+	on_critical -> critical_dodge_boost [label="Recklessness\nrank=1 cost=100\neffect: chance-based crit & dodge per activation"];
+	on_dodge    -> critical_dodge_boost [label="Recklessness\nrank=1 cost=100\neffect: chance-based crit & dodge per activation"];
+
+	on_attack -> increased_damage [label="Siegebreaker\nrank=1 cost=100\neffect: +10% damage per attack trigger"];
+
+	on_heal -> resurrect_chance   [label="Soul Rending\nrank=1 cost=100\neffect: chance to resurrect per relevant activation"];
+	on_death -> resurrect_chance  [label="Soul Rending\nrank=1 cost=100\neffect: chance to resurrect per relevant activation"];
+	on_resurrect -> resurrect_chance [label="Soul Rending\nrank=1 cost=100\neffect: chance to resurrect per relevant activation"];
+
+	// Unbound Hatred: ranks=2 cost=50, +1 extra per rank on buff/debuff/minion
+	on_buff   -> on_buff    [label="Unbound Hatred\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)"];
+	on_debuff -> on_debuff  [label="Unbound Hatred\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)"];
+	on_minion -> on_minion  [label="Unbound Hatred\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)"];
+
+	// Unleashed Power: ranks=2 cost=50, +1 extra per rank on defend/provoke
+	on_defend -> on_defend  [label="Unleashed Power\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)"];
+	on_provoke -> on_provoke [label="Unleashed Power\nranks=2 cost=50\nextra triggers per activation: +2 (rank 2)"];
+
+	on_action -> increased_damage [label="Juggernaut\nrank=1 cost=1\neffect: +5% damage per on-action trigger"];
+
+	// layout hints
+	{ rank = same; on_heal; on_death; on_resurrect }
+	{ rank = same; on_attack; on_cast; on_action }
+}
+
