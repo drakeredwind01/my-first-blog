@@ -1,3 +1,59 @@
+
+
+body {
+    padding-left: 15px;
+    font-family: 'swegothe';
+    background-color: whitesmoke;
+    
+}
 h1 a, h2 a{
     color: #C25100;
+    /* font-family: 'Lobster'; */
+    font-family: 'lobster';
+    
 }
+
+p, time {
+    /* font-family: 'Lobster'; */
+    color: black;
+    transition: all 5.0s ease-in-out; /* 'all' covers color AND shadows */
+}
+
+p:hover, time:hover {
+    color: red;
+    text-shadow: 0 0 8px rgba(255, 0, 0, 1); /* This is the 'Glow' */
+}
+
+test {
+    font-size: 3em;
+    font-family: 'Libre Barcode 39';
+    color: #C25100;
+}
+
+/*
+# This targets the background and normal text 
+body {
+    background-color: aqua !important;
+    color: red !important;
+    font-family: 'Lobster';
+}
+
+# This forces all links to also be red, overriding the orange  
+a, a:visited, a:hover {
+    color: red !important;
+    text-decoration: underline;
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
