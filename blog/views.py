@@ -10,3 +10,7 @@ def post_list(request):
 
 def resume(request):
     return render(request, 'blog/resume.html')
+
+
+def test_zone(request):
+    return render(request, 'blog/test_zone.html')

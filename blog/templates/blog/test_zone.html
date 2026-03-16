@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Drake's Django blog</title>        
+        
+        <link href="https://fonts.googleapis.com/css2?family=Almendra&family=Almendra+SC&family=IM+Fell+English&family=Libre+Barcode+39&family=Lobster&family=Special+Elite&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+        
+        <link rel="stylesheet" href="{% static 'css/test_zone.css' %}">
+    </head>
+
+    <body>
+        <header class="page-header">
+            <div class="container">
+                <h1 class="UnifrakturMaguntia"><a href="/">Drake's Django blog</a></h1>
+                <h1 class="IMFellEnglish"><a href="/">Drake's Django blog</a></h1>
+                <h1 class="Almendra"><a href="/">Drake's Django blog</a></h1>
+                <h1 class="AlmendraSC"><a href="/">Drake's Django blog</a></h1>
+                <h1 class="SpecialElite"><a href="/">Drake's Django blog</a></h1>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="row">
+                <div class="col">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </main>
+    </body>
+</html>

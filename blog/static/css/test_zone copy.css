@@ -1,3 +1,7 @@
+/* Paste this at the VERY TOP of your CSS file */
+@import url('https://fonts.googleapis.com/css2?family=Almendra&family=Almendra+SC&family=IM+Fell+English&family=Special+Elite&family=UnifrakturMaguntia&display=swap');
+
+
 .page-header {
     background-color: #C25100;
     margin-top: 0;
@@ -14,17 +18,35 @@
     text-decoration: none;
 }
 
-h1,
-h2,
-h3,
-h4 {
-    /* font-family: 'Lobster', cursive; */
-    /* font-family: 'UnifrakturMaguntia', cursive; */
-    /* font-family: 'IM Fell English', cursive; */
-    /* font-family: 'Almendra', cursive; */
-    /* font-family: 'Almendra SC', cursive; */
-    font-family: 'Special Elite', cursive;
+/* Default style for all headers */
+h1, h2, h3, h4 {
+    color: #ffffff; /* Matches your header text color */
+    margin-bottom: 10px;
 }
+
+/* Adding 'h1' before the class makes it specific enough to win */
+
+h1.UnifrakturMaguntia, h1.UnifrakturMaguntia a {
+    font-family: 'UnifrakturMaguntia', cursive !important;
+}
+
+h1.IMFellEnglish, h1.IMFellEnglish a {
+    font-family: 'IMFellEnglish', serif !important;
+}
+
+h1.Almendra, h1.Almendra a {
+    font-family: 'Almendra', serif !important;
+}
+
+h1.AlmendraSC, h1.AlmendraSC a {
+    font-family: 'AlmendraSC', serif !important;
+}
+
+h1.SpecialElite, h1.SpecialElite a {
+    font-family: 'SpecialElite', system-ui !important;
+}
+
+
 
 .date {
     color: #828282;
