@@ -246,3 +246,6 @@ order_by('published_date')
 # more about Django admin
 https://docs.djangoproject.com/en/5.1/ref/contrib/admin/
 
+
+# If you need more information about Django forms, you should read the documentation: 
+https://docs.djangoproject.com/en/5.1/topics/forms/

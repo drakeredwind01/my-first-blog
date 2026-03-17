@@ -48,5 +48,5 @@ def post_edit(request, pk):
     else:
         form = PostForm(instance=post)
     return render(request, 'blog/post_edit.html', {'form': form})
-
+# https://docs.djangoproject.com/en/5.1/topics/forms/
 
