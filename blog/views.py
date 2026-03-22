@@ -1,9 +1,11 @@
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.utils import timezone
 from .models import Post
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from .forms import PostForm
-from django.shortcuts import redirect
+import markdown
+import nh3
 
 # Create your views here.
 def post_list(request):
@@ -18,9 +20,16 @@ def resume(request):
 def test_zone(request):
     return render(request, 'blog/test_zone.html')
 
+# def post_detail(request, pk):
+#     post = get_object_or_404(Post, pk=pk)
+#     return render(request, 'blog/post_detail.html', {'post':post})
+
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    return render(request, 'blog/post_detail.html', {'post':post})
+    # No markdown conversion needed! 
+    # Just send the clean HTML from the database to the template.
+    return render(request, 'blog/post_detail.html', {'post': post})
+
 
 def post_new(request):
     if request.method == "POST":
@@ -29,12 +38,25 @@ def post_new(request):
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
+
+            # --- UPDATED SANITIZATION STEP ---
+            allowed_tags = {"h1", "h2", "h3", "p", "b", "i", "u", "ul", "ol", "li", "blockquote", "img", "a"}
+
+            allowed_attributes = {
+                "a": {"href", "title", "target"},  # Tell nh3 that <a> tags can keep these
+                "img": {"src", "alt"},             # Tell nh3 that <img> tags can keep these
+            }
+
+            # Call nh3 to scrub the text
+            post.text = nh3.clean(post.text, tags=allowed_tags, attributes=allowed_attributes)
             post.save()
             return redirect('post_detail', pk=post.pk)
     else:
         form = PostForm()
     return render(request, 'blog/post_edit.html', {'form': form})
 
+
+    
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
@@ -43,6 +65,17 @@ def post_edit(request, pk):
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
+
+            # --- UPDATED SANITIZATION STEP ---
+            allowed_tags = {"h1", "h2", "h3", "p", "b", "i", "u", "ul", "ol", "li", "blockquote", "img", "a"}
+
+            allowed_attributes = {
+                "a": {"href", "title", "target"},  # Tell nh3 that <a> tags can keep these
+                "img": {"src", "alt"},             # Tell nh3 that <img> tags can keep these
+            }
+
+            # Call nh3 to scrub the text
+            post.text = nh3.clean(post.text, tags=allowed_tags, attributes=allowed_attributes)
             post.save()
             return redirect('post_detail', pk=post.pk)
     else:

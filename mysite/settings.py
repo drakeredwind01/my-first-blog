@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'blog',
+    'payments',
+    'django_ckeditor_5',
 ]
 
 MIDDLEWARE = [
@@ -114,3 +117,40 @@ STATIC_ROOT = BASE_DIR / 'static'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+
+# Standard Media settings for images
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+
+
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': [
+            'heading', '|', 'bold', 'italic', 'link', 
+            'bulletedList', 'numberedList', 'blockQuote', 'imageUpload', '|',
+            'insertTable', 'undo', 'redo'
+        ],
+        'image': {
+            'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:alignRight'],
+            'styles': ['full', 'alignLeft', 'alignRight']
+        },
+        # This is the "Secret Sauce" for your copy-pasting:
+        'htmlSupport': {
+            'allow': [
+                {'name': 'p', 'attributes': True, 'classes': True, 'styles': True},
+            ]
+        },
+        'wordCount': {'displayWords': True},
+    }
+}
+
+
+
+
+
+
+
+
