@@ -129,6 +129,7 @@ CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 CKEDITOR_5_CONFIGS = {
     'default': {
         'toolbar': [
+            'sourceEditing', '|',  # This adds the button
             'heading', '|', 'bold', 'italic', 'link', 
             'bulletedList', 'numberedList', 'blockQuote', 'imageUpload', '|',
             'insertTable', 'undo', 'redo'
@@ -137,16 +138,13 @@ CKEDITOR_5_CONFIGS = {
             'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:alignRight'],
             'styles': ['full', 'alignLeft', 'alignRight']
         },
-        # This is the "Secret Sauce" for your copy-pasting:
         'htmlSupport': {
             'allow': [
-                {'name': 'p', 'attributes': True, 'classes': True, 'styles': True},
-            ]
+{'name': '/^(p|h1|h2|h3|b|i|u|strong|em|img|a|ul|ol|li|blockquote)$/', 'attributes': True, 'classes': True, 'styles': True},            ]
         },
         'wordCount': {'displayWords': True},
-    }
+    } # Removed the rogue 'plugins' list from out here
 }
-
 
 
 

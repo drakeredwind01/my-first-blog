@@ -67,11 +67,11 @@ def post_edit(request, pk):
             post.published_date = timezone.now()
 
             # --- UPDATED SANITIZATION STEP ---
-            allowed_tags = {"h1", "h2", "h3", "p", "b", "i", "u", "ul", "ol", "li", "blockquote", "img", "a"}
+            allowed_tags = {"h1", "h2", "h3", "p", "b", "i", "u", "ul", "ol", "li", "blockquote", "img", "a", "strong", "em"}
 
             allowed_attributes = {
                 "a": {"href", "title", "target"},  # Tell nh3 that <a> tags can keep these
-                "img": {"src", "alt"},             # Tell nh3 that <img> tags can keep these
+                "img": {"src", "alt", "width", "height", "style", "class"}, # Added more image control
             }
 
             # Call nh3 to scrub the text

@@ -35,7 +35,7 @@
             {% for post in posts %}
                 <article>
                     <h2><a href="">{{ post.title }}</a></h2>
-                    <p>{{ post.text|linebreaks }}</p>
+                    <p>{{ post.text|safe }}</p>
                     <time>published: {{ post.published_date }}</time>
                 </article>
             {% endfor %}
