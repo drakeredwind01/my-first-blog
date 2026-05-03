@@ -1,0 +1,345 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+
+<style>
+  .sw-page { padding: 16px 0 40px; }
+
+  .sw-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .sw-header h2 {
+    font-family: 'Special Elite', serif;
+    font-size: 26px;
+    margin: 0;
+  }
+
+  .sw-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  #add-btn {
+    background: #4f46e5;
+    color: #fff;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  #add-btn:hover { background: #4338ca; }
+
+  .sw-global {
+    border: none;
+    padding: 9px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .sw-global:active { transform: translateY(1px); }
+  #btn-start-all { background: rgba(22,163,74,0.12);  color: #16a34a; }
+  #btn-start-all:hover { background: rgba(22,163,74,0.22); }
+  #btn-pause-all { background: rgba(220,38,38,0.10);  color: #dc2626; }
+  #btn-pause-all:hover { background: rgba(220,38,38,0.20); }
+  #btn-reset-all { background: rgba(107,114,128,0.12); color: #6b7280; }
+  #btn-reset-all:hover { background: rgba(107,114,128,0.22); }
+
+  #sw-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 16px;
+  }
+
+  .sw-card {
+    background: rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sw-accent { height: 3px; border-radius: 2px; margin-bottom: 2px; }
+
+  .sw-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sw-name {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+    color: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    width: 160px;
+    padding: 2px 4px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .sw-name:focus { border-bottom-color: rgba(0,0,0,0.45); }
+
+  .sw-delete {
+    background: none;
+    border: none;
+    color: rgba(0,0,0,0.25);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 7px;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+    line-height: 1;
+  }
+  .sw-delete:hover { color: #dc2626; background: rgba(220,38,38,0.08); }
+
+  .sw-display {
+    font-size: 44px;
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+    text-align: center;
+    padding: 6px 0;
+  }
+
+  .sw-display .cs {
+    font-size: 28px;
+    opacity: 0.55;
+  }
+
+  .sw-controls { display: flex; gap: 7px; }
+
+  .sw-controls button {
+    flex: 1;
+    padding: 8px 4px;
+    border-radius: 9px;
+    border: 1px solid rgba(0,0,0,0.13);
+    background: rgba(0,0,0,0.04);
+    color: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s, transform 0.1s;
+  }
+  .sw-controls button:hover { background: rgba(0,0,0,0.09); }
+  .sw-controls button:active { transform: translateY(1px); }
+
+  .btn-start { color: #16a34a !important; }
+  .btn-stop  { color: #dc2626 !important; }
+  .btn-lap   { color: #2563eb !important; }
+  .btn-reset { color: #6b7280 !important; }
+
+  .sw-laps {
+    max-height: 120px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .sw-laps:empty::after {
+    content: 'No laps yet';
+    font-size: 12px;
+    opacity: 0.35;
+    text-align: center;
+    padding: 3px 0;
+    display: block;
+  }
+
+  .lap-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 3px 7px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.04);
+    font-variant-numeric: tabular-nums;
+  }
+  .lap-row .lap-num { opacity: 0.4; }
+
+  .sw-laps::-webkit-scrollbar { width: 4px; }
+  .sw-laps::-webkit-scrollbar-track { background: transparent; }
+  .sw-laps::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
+</style>
+
+<div class="sw-page">
+  <div class="sw-header">
+    <h2>Stopwatches</h2>
+    <div class="sw-actions">
+      <button class="sw-global" id="btn-start-all">Start All</button>
+      <button class="sw-global" id="btn-pause-all">Pause All</button>
+      <button class="sw-global" id="btn-reset-all">Reset All</button>
+      <button id="add-btn">+ Add</button>
+    </div>
+  </div>
+  <div id="sw-grid"></div>
+</div>
+
+<script>
+(function () {
+  const COLORS = ['#4f46e5','#0891b2','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0d9488','#ea580c','#2563eb'];
+  const watches = {};
+  let nextId = 0;
+  let rafId = null;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function formatMs(ms) {
+    const cs = Math.floor((ms % 1000) / 10);
+    const s  = Math.floor(ms / 1000) % 60;
+    const m  = Math.floor(ms / 60000) % 60;
+    const h  = Math.floor(ms / 3600000);
+    const main = h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+    return `${main}<span class="cs">.${pad(cs)}</span>`;
+  }
+
+  function plainMs(ms) {
+    const cs = Math.floor((ms % 1000) / 10);
+    const s  = Math.floor(ms / 1000) % 60;
+    const m  = Math.floor(ms / 60000) % 60;
+    const h  = Math.floor(ms / 3600000);
+    const main = h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+    return `${main}.${pad(cs)}`;
+  }
+
+  function getElapsed(sw) {
+    return sw.running ? sw.elapsed + (Date.now() - sw.startTime) : sw.elapsed;
+  }
+
+  function tick() {
+    const running = Object.values(watches).filter(sw => sw.running);
+    running.forEach(sw => {
+      const el = document.getElementById(`sw-display-${sw.id}`);
+      if (el) el.innerHTML = formatMs(getElapsed(sw));
+    });
+    rafId = running.length ? requestAnimationFrame(tick) : null;
+  }
+
+  function ensureLoop() {
+    if (!rafId) rafId = requestAnimationFrame(tick);
+  }
+
+  function addWatch() {
+    const id = nextId++;
+    watches[id] = { id, elapsed: 0, startTime: null, running: false, laps: [], color: COLORS[id % COLORS.length] };
+    const sw = watches[id];
+
+    const card = document.createElement('div');
+    card.className = 'sw-card';
+    card.id = `sw-card-${id}`;
+    card.innerHTML = `
+      <div class="sw-accent" style="background:${sw.color}"></div>
+      <div class="sw-top">
+        <input class="sw-name" type="text" value="Stopwatch ${id + 1}" spellcheck="false">
+        <button class="sw-delete" title="Remove">✕</button>
+      </div>
+      <div class="sw-display" id="sw-display-${id}">00:00<span class="cs">.00</span></div>
+      <div class="sw-controls">
+        <button class="btn-start" id="sw-ss-${id}">Start</button>
+        <button class="btn-lap"   id="sw-lap-${id}">Lap</button>
+        <button class="btn-reset" id="sw-reset-${id}">Reset</button>
+      </div>
+      <div class="sw-laps" id="sw-laps-${id}"></div>
+    `;
+
+    card.querySelector('.sw-delete').addEventListener('click', () => {
+      watches[id] && (watches[id].running = false);
+      delete watches[id];
+      card.remove();
+    });
+
+    document.getElementById('sw-grid').appendChild(card);
+
+    document.getElementById(`sw-ss-${id}`).addEventListener('click', () => {
+      const s = watches[id];
+      const btn = document.getElementById(`sw-ss-${id}`);
+      if (s.running) {
+        s.elapsed += Date.now() - s.startTime;
+        s.running = false;
+        btn.textContent = 'Start';
+        btn.className = 'btn-start';
+        document.getElementById(`sw-display-${id}`).innerHTML = formatMs(s.elapsed);
+      } else {
+        s.startTime = Date.now();
+        s.running = true;
+        btn.textContent = 'Stop';
+        btn.className = 'btn-stop';
+        ensureLoop();
+      }
+    });
+
+    document.getElementById(`sw-lap-${id}`).addEventListener('click', () => {
+      const s = watches[id];
+      const total = getElapsed(s);
+      if (!total) return;
+      const prev = s.laps.length ? s.laps[s.laps.length - 1].total : 0;
+      s.laps.push({ total, split: total - prev });
+      const row = document.createElement('div');
+      row.className = 'lap-row';
+      row.innerHTML = `<span class="lap-num">Lap ${s.laps.length}</span><span>${plainMs(total - prev)}</span><span>${plainMs(total)}</span>`;
+      document.getElementById(`sw-laps-${id}`).prepend(row);
+    });
+
+    document.getElementById(`sw-reset-${id}`).addEventListener('click', () => {
+      const s = watches[id];
+      s.running = false; s.elapsed = 0; s.startTime = null; s.laps = [];
+      const btn = document.getElementById(`sw-ss-${id}`);
+      btn.textContent = 'Start'; btn.className = 'btn-start';
+      document.getElementById(`sw-display-${id}`).innerHTML = '00:00<span class="cs">.00</span>';
+      document.getElementById(`sw-laps-${id}`).innerHTML = '';
+    });
+  }
+
+  document.getElementById('add-btn').addEventListener('click', addWatch);
+
+  document.getElementById('btn-start-all').addEventListener('click', () => {
+    Object.values(watches).forEach(sw => {
+      if (!sw.running) {
+        sw.startTime = Date.now();
+        sw.running = true;
+        const btn = document.getElementById(`sw-ss-${sw.id}`);
+        if (btn) { btn.textContent = 'Stop'; btn.className = 'btn-stop'; }
+      }
+    });
+    ensureLoop();
+  });
+
+  document.getElementById('btn-pause-all').addEventListener('click', () => {
+    Object.values(watches).forEach(sw => {
+      if (sw.running) {
+        sw.elapsed += Date.now() - sw.startTime;
+        sw.running = false;
+        const btn = document.getElementById(`sw-ss-${sw.id}`);
+        if (btn) { btn.textContent = 'Start'; btn.className = 'btn-start'; }
+        const el = document.getElementById(`sw-display-${sw.id}`);
+        if (el) el.innerHTML = formatMs(sw.elapsed);
+      }
+    });
+  });
+
+  document.getElementById('btn-reset-all').addEventListener('click', () => {
+    Object.values(watches).forEach(sw => {
+      sw.running = false; sw.elapsed = 0; sw.startTime = null; sw.laps = [];
+      const btn = document.getElementById(`sw-ss-${sw.id}`);
+      if (btn) { btn.textContent = 'Start'; btn.className = 'btn-start'; }
+      const el = document.getElementById(`sw-display-${sw.id}`);
+      if (el) el.innerHTML = '00:00<span class="cs">.00</span>';
+      const laps = document.getElementById(`sw-laps-${sw.id}`);
+      if (laps) laps.innerHTML = '';
+    });
+  });
+
+  addWatch();
+  addWatch();
+})();
+</script>
+
+{% endblock %}

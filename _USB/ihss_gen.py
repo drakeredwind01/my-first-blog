@@ -2,6 +2,7 @@ import csv
 from datetime import datetime, timedelta
 
 def generate_ihss_hours(year, start_month, num_months):
+    
     filename = f"IHSS_Schedule_{year}.csv"
     headers = ['date YYYY_MM_DD', 'Month', 'Day', 'Hours', 'Weekly_Total', 'PayPeriod_Total', 'Monthly_Total']
     

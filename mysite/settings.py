@@ -12,9 +12,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -38,9 +40,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'blog',
-    'payments',
-    'django_ckeditor_5',
+    'blog',                         # app blog
+    'django_ckeditor_5',            # rich text editor for blog posts
+    'payments.apps.PaymentsConfig', # for payments app configuration
+    'tools',
+
 ]
 
 MIDDLEWARE = [
@@ -58,7 +62,7 @@ ROOT_URLCONF = "mysite.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': ['templates'], # new
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -107,6 +111,13 @@ USE_I18N = True
 USE_TZ = True
 
 
+
+
+
+# ____________________________________________________________________________________________________
+# Below are settings for static files, media files, and CKEditor 5 configuration.
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
@@ -152,3 +163,6 @@ CKEDITOR_5_CONFIGS = {
 
 
 
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_ENDPOINT_SECRET = os.environ.get('STRIPE_ENDPOINT_SECRET')

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Multi-Stopwatch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap');
+        
+        .timer-font {
+            font-family: 'JetBrains+Mono', monospace;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .custom-shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+        }
+
+        .lap-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .lap-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-4 md:p-8 text-slate-800">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Multi-Stopwatch</h1>
+                <p class="text-slate-500">Track multiple events independently or simultaneously.</p>
+            </div>
+            
+            <div class="flex flex-wrap gap-2">
+                <button onclick="addStopwatch()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all shadow-lg shadow-blue-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Add Timer
+                </button>
+                <div class="h-10 w-[1px] bg-slate-200 mx-2 hidden md:block"></div>
+                <button onclick="globalAction('start')" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Start All</button>
+                <button onclick="globalAction('pause')" class="bg-white border border-slate-200 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors">Pause All</button>
+                <button onclick="globalAction('reset')" class="bg-white border border-slate-200 hover:bg-red-50 hover:text-red-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors">Reset All</button>
+            </div>
+        </header>
+
+        <!-- Timers Grid -->
+        <div id="timers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Timers will be injected here -->
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden flex flex-col items-center justify-center py-20 text-slate-400">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mb-4 opacity-20"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <p class="text-lg">No active stopwatches.</p>
+        <button onclick="addStopwatch()" class="mt-4 text-blue-600 font-medium hover:underline">Add one to get started</button>
+    </div>
+
+    <script>
+        let stopwatches = [];
+
+        function formatTime(ms) {
+            let hours = Math.floor(ms / 3600000);
+            let minutes = Math.floor((ms % 3600000) / 60000);
+            let seconds = Math.floor((ms % 60000) / 1000);
+            let centiseconds = Math.floor((ms % 1000) / 10);
+
+            return {
+                h: String(hours).padStart(2, '0'),
+                m: String(minutes).padStart(2, '0'),
+                s: String(seconds).padStart(2, '0'),
+                c: String(centiseconds).padStart(2, '0')
+            };
+        }
+
+        function renderTimers() {
+            const grid = document.getElementById('timers-grid');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (stopwatches.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            grid.innerHTML = stopwatches.map(sw => {
+                const t = formatTime(sw.currentTime);
+                const isRunning = sw.interval !== null;
+                
+                return `
+                <div class="glass-card rounded-2xl p-6 custom-shadow flex flex-col transition-all duration-300 ${isRunning ? 'ring-2 ring-blue-500 ring-offset-2' : ''}" id="card-${sw.id}">
+                    <div class="flex items-center justify-between mb-4">
+                        <input type="text" 
+                               value="${sw.name}" 
+                               onchange="updateName(${sw.id}, this.value)"
+                               placeholder="Timer Name"
+                               class="bg-transparent font-bold text-lg focus:outline-none focus:border-b-2 border-blue-500 w-full mr-4 text-slate-700">
+                        <button onclick="removeStopwatch(${sw.id})" class="text-slate-400 hover:text-red-500 transition-colors p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+
+                    <div class="timer-font text-4xl font-bold flex justify-center items-baseline gap-1 my-6 text-slate-900">
+                        <span>${t.h}</span><span class="text-slate-300 text-2xl">:</span>
+                        <span>${t.m}</span><span class="text-slate-300 text-2xl">:</span>
+                        <span>${t.s}</span><span class="text-blue-500 text-xl ml-1">.${t.c}</span>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 mb-6">
+                        <button onclick="toggleTimer(${sw.id})" 
+                                class="col-span-1 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-1 ${isRunning ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-100'}">
+                            ${isRunning ? 'Pause' : 'Start'}
+                        </button>
+                        <button onclick="addLap(${sw.id})" 
+                                class="col-span-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-all">
+                            Lap
+                        </button>
+                        <button onclick="resetTimer(${sw.id})" 
+                                class="col-span-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-red-50 hover:text-red-600 transition-all">
+                            Reset
+                        </button>
+                    </div>
+
+                    <!-- Laps -->
+                    <div class="lap-list overflow-y-auto max-h-32 pr-2 border-t border-slate-50 pt-4">
+                        ${sw.laps.length === 0 ? '<p class="text-xs text-slate-400 italic text-center py-2">No laps recorded</p>' : ''}
+                        ${sw.laps.map((lap, idx) => `
+                            <div class="flex justify-between text-sm py-1 border-b border-slate-50 last:border-0">
+                                <span class="text-slate-400 font-medium">Lap ${sw.laps.length - idx}</span>
+                                <span class="timer-font font-semibold">${lap}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function addStopwatch() {
+            const newSw = {
+                id: Date.now(),
+                name: `Timer ${stopwatches.length + 1}`,
+                currentTime: 0,
+                startTime: null,
+                laps: [],
+                interval: null
+            };
+            stopwatches.push(newSw);
+            renderTimers();
+        }
+
+        function updateName(id, val) {
+            const sw = stopwatches.find(s => s.id === id);
+            if (sw) sw.name = val;
+        }
+
+        function toggleTimer(id) {
+            const sw = stopwatches.find(s => s.id === id);
+            if (!sw) return;
+
+            if (sw.interval) {
+                // Pause logic
+                clearInterval(sw.interval);
+                sw.interval = null;
+            } else {
+                // Start logic
+                const startTime = Date.now() - sw.currentTime;
+                sw.interval = setInterval(() => {
+                    sw.currentTime = Date.now() - startTime;
+                    // For performance, we only update the specific card display if we can,
+                    // otherwise full re-render for simplicity in this demo
+                    updateDisplayUI(sw);
+                }, 10);
+            }
+            renderTimers();
+        }
+
+        function updateDisplayUI(sw) {
+            const t = formatTime(sw.currentTime);
+            const card = document.getElementById(`card-${sw.id}`);
+            if (card) {
+                const display = card.querySelector('.timer-font');
+                display.innerHTML = `<span>${t.h}</span><span class="text-slate-300 text-2xl">:</span><span>${t.m}</span><span class="text-slate-300 text-2xl">:</span><span>${t.s}</span><span class="text-blue-500 text-xl ml-1">.${t.c}</span>`;
+            }
+        }
+
+        function resetTimer(id) {
+            const sw = stopwatches.find(s => s.id === id);
+            if (!sw) return;
+            clearInterval(sw.interval);
+            sw.interval = null;
+            sw.currentTime = 0;
+            sw.laps = [];
+            renderTimers();
+        }
+
+        function addLap(id) {
+            const sw = stopwatches.find(s => s.id === id);
+            if (!sw || sw.currentTime === 0) return;
+            const t = formatTime(sw.currentTime);
+            const lapStr = `${t.h}:${t.m}:${t.s}.${t.c}`;
+            sw.laps.unshift(lapStr);
+            renderTimers();
+        }
+
+        function removeStopwatch(id) {
+            const sw = stopwatches.find(s => s.id === id);
+            if (sw && sw.interval) clearInterval(sw.interval);
+            stopwatches = stopwatches.filter(s => s.id !== id);
+            renderTimers();
+        }
+
+        function globalAction(action) {
+            stopwatches.forEach(sw => {
+                if (action === 'start' && !sw.interval) {
+                    const startTime = Date.now() - sw.currentTime;
+                    sw.interval = setInterval(() => {
+                        sw.currentTime = Date.now() - startTime;
+                        updateDisplayUI(sw);
+                    }, 10);
+                } else if (action === 'pause' && sw.interval) {
+                    clearInterval(sw.interval);
+                    sw.interval = null;
+                } else if (action === 'reset') {
+                    clearInterval(sw.interval);
+                    sw.interval = null;
+                    sw.currentTime = 0;
+                    sw.laps = [];
+                }
+            });
+            renderTimers();
+        }
+
+        // Initial setup
+        addStopwatch();
+    </script>
+</body>
+</html>
