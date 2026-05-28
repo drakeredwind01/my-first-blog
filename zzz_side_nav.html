@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Sidebar - Foldable Levels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --sidebar-bg: #111111;
+            --dragon-red: #b91c1c; 
+            --dragon-gold: #fbbf24;
+            --collapsed-width: 70px;
+            --expanded-width: 280px;
+        }
+
+        body {
+            margin: 0;
+            background-color: #1a1a1a;
+            color: white;
+            overflow-x: hidden;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* Sidebar Container */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--collapsed-width);
+            background: var(--sidebar-bg);
+            transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+            overflow-x: hidden;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar:hover {
+            width: var(--expanded-width);
+        }
+
+        #snakeCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0; 
+            opacity: 0.9;
+        }
+
+        .sidebar-header {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10; 
+        }
+
+        .dragon-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            border-radius: 50%;
+            transition: transform 0.5s ease;
+            filter: drop-shadow(0 0 8px rgba(185, 28, 28, 0.4));
+        }
+
+        .sidebar:hover .dragon-logo {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* Navigation List */
+        .nav-list {
+            margin-top: 1rem;
+            list-style: none;
+            padding: 0;
+            position: relative;
+            z-index: 10; 
+        }
+
+        /* Nav Item Base Styling */
+        .nav-item {
+            height: 45px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            color: #777;
+            white-space: nowrap;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav-item:hover .nav-link {
+            color: #fff;
+        }
+
+        .nav-icon {
+            flex-shrink: 0;
+            margin-left: 25px; 
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .nav-item:hover .nav-icon {
+            color: var(--dragon-gold);
+        }
+
+        /* Submenu Visibility */
+        .submenu {
+            display: none; /* Folded by default */
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item.open + .submenu {
+            display: block;
+        }
+
+        /* Chevron for parent items */
+        .chevron {
+            margin-left: auto;
+            margin-right: 15px;
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        .sidebar:hover .chevron { opacity: 0.5; }
+        .nav-item.open .chevron { transform: rotate(90deg); }
+
+        /* Level Indentations */
+        .level-1 .nav-icon { margin-left: 45px; }
+        .level-2 .nav-icon { margin-left: 65px; }
+
+        .nav-text {
+            margin-left: 15px;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .sidebar:hover .nav-text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        main {
+            margin-left: var(--collapsed-width);
+            padding: 3rem;
+            transition: margin-left 0.4s ease;
+        }
+
+        h1 { color: var(--dragon-gold); }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar" id="mainSidebar">
+        <canvas id="snakeCanvas"></canvas>
+
+        <div class="sidebar-header">
+            <img src="https://avatars.githubusercontent.com/u/43461626?s=400&u=549b183a3dc5679439044f37ec7a9ab3c5f59088&v=4" alt="Dragon Logo" class="dragon-logo">
+        </div>
+
+        <ul class="nav-list">
+            <!-- Level 0 Dashboard -->
+            <li class="nav-item" data-level="0">
+                <div class="nav-link">
+                    <svg class="nav-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span class="nav-text">Dashboard</span>
+                </div>
+            </li>
+
+            <!-- Level 0 Parent -->
+            <li class="nav-item has-submenu" data-level="0">
+                <div class="nav-link">
+                    <svg class="nav-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <span class="nav-text">Project Vault</span>
+                    <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </li>
+            <!-- Level 1 Submenu -->
+            <ul class="submenu">
+                <li class="nav-item level-1 has-submenu" data-level="1">
+                    <div class="nav-link">
+                        <svg class="nav-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 19l7-7 7 7"></path></svg>
+                        <span class="nav-text">Active Files</span>
+                        <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 5l7 7-7 7"></path></svg>
+                    </div>
+                </li>
+                <!-- Level 2 Submenu -->
+                <ul class="submenu">
+                    <li class="nav-item level-2" data-level="2">
+                        <div class="nav-link"><span class="nav-icon">•</span><span class="nav-text">Internal Docs</span></div>
+                    </li>
+                    <li class="nav-item level-2" data-level="2">
+                        <div class="nav-link"><span class="nav-icon">•</span><span class="nav-text">User Guides</span></div>
+                    </li>
+                </ul>
+
+                <li class="nav-item level-1" data-level="1">
+                    <div class="nav-link">
+                        <svg class="nav-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        <span class="nav-text">Secure Access</span>
+                    </div>
+                </li>
+            </ul>
+
+            <li class="nav-item" data-level="0">
+                <div class="nav-link">
+                    <svg class="nav-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <span class="nav-text">Systems</span>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <main id="mainContent">
+        <h1 class="text-4xl font-bold mb-4">Dragon Command</h1>
+        <p class="text-gray-400 max-w-2xl leading-relaxed">
+            Categories are now folded by default. Expand the sidebar, then click on "Project Vault" or "Active Files" to toggle the indented sub-levels. The crimson slither will adjust its position to follow the indentations.
+        </p>
+    </main>
+
+    <script>
+        const canvas = document.getElementById('snakeCanvas');
+        const ctx = canvas.getContext('2d');
+        const sidebar = document.getElementById('mainSidebar');
+        
+        let width, height;
+        function resize() {
+            width = sidebar.offsetWidth;
+            height = sidebar.scrollHeight; // Use scrollHeight for full length with opened menus
+            canvas.width = sidebar.offsetWidth;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Short, responsive snake body
+        const numSegments = 12; 
+        const segmentLength = 5;
+        const segments = [];
+        
+        let targetX = 12; 
+        let targetY = 40; 
+        
+        let currentX = targetX;
+        let currentY = targetY;
+
+        for (let i = 0; i < numSegments; i++) {
+            segments.push({ x: currentX, y: currentY });
+        }
+
+        // Toggle Submenus
+        document.querySelectorAll('.has-submenu').forEach(item => {
+            item.addEventListener('click', (e) => {
+                item.classList.toggle('open');
+                resize(); // Recalculate height for the snake trail
+            });
+        });
+
+        // Snake tracking logic
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                const rect = item.getBoundingClientRect();
+                const level = parseInt(item.getAttribute('data-level') || '0');
+                
+                // Get position relative to the sidebar scroll container
+                const sidebarRect = sidebar.getBoundingClientRect();
+                targetY = (rect.top - sidebarRect.top) + (rect.height / 2);
+                
+                if (level === 0) targetX = 12;
+                else if (level === 1) targetX = 32;
+                else if (level === 2) targetX = 52;
+            });
+        });
+
+        sidebar.addEventListener('mouseleave', () => {
+            targetX = 12;
+            targetY = 40; 
+        });
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            currentX += (targetX - currentX) * 0.15;
+            currentY += (targetY - currentY) * 0.15;
+            
+            segments[0].x = currentX;
+            segments[0].y = currentY;
+
+            for (let i = 1; i < numSegments; i++) {
+                const dx = segments[i].x - segments[i-1].x;
+                const dy = segments[i].y - segments[i-1].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx);
+
+                if (distance > segmentLength) {
+                    segments[i].x = segments[i-1].x + Math.cos(angle) * segmentLength;
+                    segments[i].y = segments[i-1].y + Math.sin(angle) * segmentLength;
+                }
+            }
+
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(185, 28, 28, 0.7)';
+            ctx.strokeStyle = '#b91c1c'; 
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(segments[0].x, segments[0].y);
+            for (let i = 1; i < numSegments; i++) {
+                ctx.lineTo(segments[i].x, segments[i].y);
+            }
+            ctx.stroke();
+
+            ctx.shadowBlur = 4;
+            ctx.fillStyle = '#fbbf24'; 
+            ctx.beginPath();
+            ctx.arc(segments[0].x, segments[0].y, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            requestAnimationFrame(animate);
+        }
+
+        // Monitor scroll changes to keep snake aligned
+        sidebar.addEventListener('scroll', () => {
+            // Force re-calculation if needed, though mouseenter usually handles it
+        });
+
+        setInterval(resize, 1000); 
+        animate();
+    </script>
+</body>
+</html>

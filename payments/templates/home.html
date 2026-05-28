@@ -1,20 +1,51 @@
-<!-- templates/home.html -->
 {% load static %}
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Django + Stripe Checkout</title>
+    <title>Shop</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <script src="https://js.stripe.com/v3/"></script>
-    <script src="{% static 'main.js' %}"></script>
+    <script src="{% static 'main.js' %}" defer></script>
     <script defer src="https://use.fontawesome.com/releases/v6.4.0/js/all.js"></script>
   </head>
   <body>
   <section class="section">
     <div class="container">
-      <button class="button is-primary" id="submitBtn">Purchase!</button>
+      <h1 class="title">Shop</h1>
+      <div class="columns is-multiline">
+        {% for product in products %}
+        <div class="column is-one-third">
+          <div class="card">
+            {% if product.image %}
+            <div class="card-image">
+              <figure class="image">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+              </figure>
+            </div>
+            {% endif %}
+            <div class="card-content">
+              <p class="title is-5">{{ product.name }}</p>
+              <p class="subtitle is-6">{{ product.price_display }}</p>
+              <p>{{ product.description }}</p>
+              <p class="has-text-grey mt-2">Stock: {{ product.stock }}</p>
+            </div>
+            <footer class="card-footer">
+              <button class="button is-primary buy-btn card-footer-item"
+                      data-product-id="{{ product.id }}"
+                      {% if product.stock == 0 %}disabled{% endif %}>
+                {% if product.stock == 0 %}Sold Out{% else %}Buy{% endif %}
+              </button>
+            </footer>
+          </div>
+        </div>
+        {% empty %}
+        <div class="column">
+          <p>No products available right now.</p>
+        </div>
+        {% endfor %}
+      </div>
     </div>
   </section>
   </body>

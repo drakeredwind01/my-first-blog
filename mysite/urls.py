@@ -1,3 +1,4 @@
+# mysite/urls.py
 """
 URL configuration for mysite project.
 
@@ -25,7 +26,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('blog.urls')),
     path("ckeditor5/", include('django_ckeditor_5.urls')),
-    path('payments/', include('payments.urls')), # app payments urls
+    path('shop/', include('payments.urls')),
     path('tools/', include('tools.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
