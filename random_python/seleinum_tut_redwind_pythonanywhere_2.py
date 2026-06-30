@@ -32,10 +32,10 @@ print(title)
 # time.sleep(3)
 
 # Target the submit input inside Django admin's .submit-row div
-# submit_button = driver.find_element(By.CSS_SELECTOR, ".submit-row input[type='submit']")
+submit_button = driver.find_element(By.CSS_SELECTOR, ".submit-row input[type='submit']")
 #                                         <div class="submit-row">  <input type="submit" value="Log in">
-# is_enabled_button = submit_button.is_enabled()
-# print(f"Is the submit button enabled? {is_enabled_button}")
+is_enabled_button = submit_button.is_enabled()
+print(f"Is the submit button enabled? {is_enabled_button}")
 
 
 

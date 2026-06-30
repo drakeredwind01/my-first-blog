@@ -1,0 +1,142 @@
+terrarian:
+  Base Inventory Slots: 59
+  Max stack per slot: 9999
+  Inventory breakdown: 50 Main Slots + 4 Coin + 4 Ammo + 1 Trash
+  Inventory not counting: Piggy Bank, Safe, Void Vault, & Defender's Forge
+  Inventory not counting reason: these are black hole items. Reasoned by teleporting items
+  comparison block: Gold Blocks
+  comparison block demensions: 1m x 1m x 1m
+  comparison block weight: 19.3 metric tons
+  comparison block stack: 9999
+  comparison block stack weight: 192,980.7 metric tons  
+  Heaviest item: Golden Throne
+  heaviest item components: 30 Platinum Bars and 20 Silk
+  heaviest item weight: 11.45 Million Metric Tons
+  Heaviest item stack: 9999
+  Heaviest item stack weight: 790 Million Tons
+  heaviest inventory weight: 2.53 Billion Metric Tons
+  
+  Max inventory weight: 
+  Max banned weight: 790 million metric tons
+
+  Biggest explosions:
+    detonator Explosives: 500
+
+  max stack damage reduction: 60–70%.
+  max baseline armor stat: ? 100
+  
+  blocks:
+    block dementions: ? 1m x 1m x 1m
+
+  mobility:
+    jumping:
+      max jump height: ? 10 blocks
+      max jump distance: ? 5 blocks
+    running: 
+    flying: 
+      fly time: infinite flight
+      fly speed: 
+    swimming: 
+      swimming time: infinite swimming
+      swimming speed: ?
+
+great melee weapons:
+  zeniths:
+    DPS: 1000
+    damage: ?
+    knockback: ?
+    use time: 0.25 seconds
+    auto reuse: yes
+    critical strike chance: 4%
+    special effects: 
+      - shoots a wave of energy that can hit multiple enemies
+      - can be swung in any direction, allowing for versatile combat
+      - has a unique animation that makes it visually distinct from other weapons
+
+great ranged weapons:
+  s.d.m.g:
+    DPS: ?
+    damage: ?
+    knockback: ?
+    use time: 0.1 seconds
+    RPM: ?
+    reload time: 0
+    auto reuse: yes
+    critical strike chance: 4%
+    special effects: 
+      - shoots a rapid stream of bullets that can hit multiple enemies
+      - has a high rate of fire, making it effective for crowd control
+      - can be used with various types of ammunition for different effects
+
+
+
+
+steve:
+  Base Inventory Slots: 37 Slots
+  Max stack per slot: 64
+  Inventory breakdown: 36 Main Slots + 1 Off-hand
+  Inventory not counting: Shulker Boxes
+  Inventory not counting reason: these are black hole items. Reasoned by teleporting items
+  Heaviest inventory item stack: Gold Blocks
+  Max inventory weight: 
+  Max banned weight: 1.23 million metric tons
+
+  Biggest explosions:
+    block of TNT power: 4 
+    block of TNT radius of destruction: 
+    Charged Creeper power: 6
+    Charged Creeper radius of destruction: 
+
+
+  Ultimate saving item: Totem of Undying
+  effects of Ultimate saving item: 
+    - one save of one-shot infinite damage
+    - Prevents death once
+    - Restores 4 hunger points
+    - Grants Regeneration II for 40 seconds
+    - Grants Absorption II for 5 seconds
+
+  mobility:
+    jumping:
+      max jump height: 1.25 blocks
+      max jump distance: 4 blocks
+    running: 4.317 m/s
+    flying: 0 m/s (without Elytra)
+    swimming: 0.5 m/s
+
+
+  great melee weapons:
+    dimond sword:
+      DPS: ?
+      RPM: ?
+      damage: ?
+      knockback: ?
+      use time: 0.5 seconds
+      auto reuse: no
+      critical strike chance: 0%
+      special effects: 
+
+
+  great ranged weapons:
+    bow V:
+      DPS: ?
+      RPM: ?
+      reload time: 0.5 seconds
+      damage: ?
+      knockback: ?
+      use time: 0.5 seconds
+      auto reuse: no
+      critical strike chance: 0%
+      special effects: 
+
+
+  great ranged weapons:
+    s.d.m.g:
+
+
+    TERRARIAN                       STEVE
+   [Melee] -------> Zeniths, Meowmeres            Netherite Swords <------- [Melee]
+   [Ranged] ------> S.D.M.G, Celeb. MK2           Power V Bows     <------- [Ranged]
+   [Mobility] ----> Infinite Flight, Rod of Disc. Elytra, Rockets  <------- [Mobility]
+
+
